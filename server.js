@@ -1,13 +1,32 @@
-const express = require('express');
-const colors = require('colors');
+const express = require("express");
+const { connectToDatabase } = require("./DataBase/dbConnection");
+const { LoginUserRouter } = require("./routes/loginRouter");
+const { invoiceRouter } = require("./routes/invoiceRouter");
+const { uploadRouter } = require("./routes/uploadRouter");
+const { clientRouter } = require("./routes/ClientRouter");
+const {
+  businessRouterIndividual,
+} = require("./routes/businessIndividualRouter ");
+const {
+  businessRouterOrganization,
+} = require("./routes/businessOrganizationRouter");
+const colors = require("colors");
 
 const app = express();
-const port = 3000;
 
-app.get('/', (req, res) => {
-  res.send('Hello  World!');
-});
+require('dotenv').config();
+app.use(express.json());
+// const PORT = 3010;
+const PORT = process.env.PORT || 5000;
 
-app.listen(port, () => {
-  console.log('Server listening on port'.blue, port.toString().green);
+connectToDatabase();
+
+app.use("/individual", businessRouterIndividual);
+app.use("/organization", businessRouterOrganization);
+app.use("/client", clientRouter);
+app.use("/upload", uploadRouter);
+app.use("/invoices", invoiceRouter);
+app.use("/login", LoginUserRouter);
+app.listen(PORT, () => {
+  console.log("Server listening on port".blue, PORT.toString().green);
 });
